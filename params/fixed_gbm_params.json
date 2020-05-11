@@ -1,0 +1,12 @@
+{
+  "booster": "gbtree",
+  "verbosity": 2,
+  "validate_parameters": true,
+  "maximise": false,
+  "random_state": 0,
+  "predictor": "cpu_predictor",
+  "tree_method": "hist",
+  "gpu_id": 0,
+  "early_stopping_rounds": 10,
+  "n_estimators": 20
+}

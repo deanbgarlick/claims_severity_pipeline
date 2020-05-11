@@ -1,0 +1,68 @@
+[
+  {
+      "name": "max_depth",
+      "type": "range",
+      "bounds": [1,18],
+      "value_type": "int"
+  },
+  {
+      "name": "learning_rate",
+      "type": "range",
+      "bounds": [0.000001,1],
+      "value_type": "float"
+  },
+  {
+      "name": "gamma",
+      "type": "fixed",
+      "value": 0.0,
+      "value_type": "float"
+  },
+  {
+      "name": "max_delta_step",
+      "type": "fixed",
+      "value": 0.0,
+      "value_type": "float"
+  },
+  {
+      "name": "min_child_weight",
+      "type": "range",
+      "bounds": [0,500],
+      "value_type": "int"
+  },
+  {
+      "name": "subsample",
+      "type": "range",
+      "bounds": [0.5,1],
+      "value_type": "float"
+  },
+  {
+      "name": "colsample_bytree",
+      "type": "range",
+      "bounds": [0.1,1],
+      "value_type": "float"
+  },
+    {
+      "name": "colsample_bylevel",
+      "type": "range",
+      "bounds": [0.1,1],
+      "value_type": "float"
+  },
+  {
+      "name": "colsample_bynode",
+      "type": "range",
+      "bounds": [0.1,1],
+      "value_type": "float"
+  },
+  {
+      "name": "reg_alpha",
+      "type": "range",
+      "bounds": [0,2000],
+      "value_type": "float"
+  },
+  {
+      "name": "reg_lambda",
+      "type": "range",
+      "bounds": [0,300],
+      "value_type": "float"
+  }
+]
