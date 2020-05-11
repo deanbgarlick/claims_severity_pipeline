@@ -5,7 +5,7 @@ from pandas import read_csv
 from xgboost import XGBRegressor
 
 
-def fit_gbm(data, variable_gbm_params, fixed_gbm_params):
+def fit_gbm(data, fixed_gbm_params, variable_gbm_params):
     gbm_parameters = deepcopy(variable_gbm_params)
     gbm_parameters.update(fixed_gbm_params)
     gbm = XGBRegressor(objective="reg:gamma")
@@ -41,7 +41,7 @@ def main():
     with open('params/fixed_gbm_params.json', 'r') as f:
         fixed_gbm_params = json.load(f)
     data["y_train"] = data["y_train"].loc[data["X_train_encoded"].index]
-    fit_gbm(data, variable_gbm_params, fixed_gbm_params)
+    fit_gbm(data, fixed_gbm_params, variable_gbm_params)
 
 
 if __name__ == "__main__":
