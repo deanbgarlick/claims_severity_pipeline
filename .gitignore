@@ -1,3 +1,4 @@
 .idea/*
 .venv/*
 project_setup.sh
+data/*
