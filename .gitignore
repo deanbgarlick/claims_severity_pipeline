@@ -9,4 +9,4 @@ venv/*
 **__pycache__**
 
 # Bash scripts
-project_setup.sh
+# project_setup.sh
