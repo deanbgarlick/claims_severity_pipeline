@@ -8,5 +8,5 @@
   "tree_method": "hist",
   "gpu_id": 0,
   "early_stopping_rounds": 10,
-  "n_estimators": 20
+  "n_estimators": 10
 }
