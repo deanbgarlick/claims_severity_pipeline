@@ -5,6 +5,12 @@ from pandas import read_csv
 from xgboost import XGBRegressor
 
 
+def score_gbm_configuration(data, fixed_gbm_params, variable_gbm_params):
+    gbm = fit_gbm(data, fixed_gbm_params, variable_gbm_params)
+    results = gbm.evals_result()
+    return min(results['validation_0']['mae'])
+
+
 def fit_gbm(data, fixed_gbm_params, variable_gbm_params):
     gbm_parameters = deepcopy(variable_gbm_params)
     gbm_parameters.update(fixed_gbm_params)
@@ -20,11 +26,11 @@ def fit_gbm(data, fixed_gbm_params, variable_gbm_params):
             (data["X_holdout_encoded"], data["y_holdout"])
         ],
     )
-    results = gbm.evals_result()
-    return min(results['validation_0']['mae'])
+    return gbm
 
 
-def main():
+def main(variable_gbm_params=None):
+
     data = {
         data_name: read_csv("data/" + data_name + ".csv", index_col="id")
         for data_name in [
@@ -33,16 +39,33 @@ def main():
             "X_test_encoded",
             "y_test",
             "X_holdout_encoded",
-            "y_holdout"
+            "y_holdout",
+            "X_blind_encoded",
+            "y_blind",
         ]
     }
-    with open('params/benchmark_gbm_params.json', 'r') as f:
-        variable_gbm_params = json.load(f)
-    with open('params/fixed_gbm_params.json', 'r') as f:
+    if variable_gbm_params is None:
+        with open("params/benchmark_gbm_params.json", "r") as f:
+            variable_gbm_params = json.load(f)
+    with open("params/fixed_gbm_params.json", "r") as f:
         fixed_gbm_params = json.load(f)
     data["y_train"] = data["y_train"].loc[data["X_train_encoded"].index]
-    fit_gbm(data, fixed_gbm_params, variable_gbm_params)
 
+    data["X_train_encoded"] = data["X_train_encoded"].append(data["X_test_encoded"])
+    data["y_train"] = data["y_train"].append(data["y_test"])
+
+    data["X_test_encoded"] = data["X_holdout_encoded"]
+    data["y_test"] = data["y_holdout"]
+
+    data["X_holdout_encoded"] = data["X_blind_encoded"]
+    data["y_holdout"] = data["y_blind"]
+
+    del data["X_blind_encoded"]
+    del data["y_blind"]
+
+    gbm = fit_gbm(data, fixed_gbm_params, variable_gbm_params)
+
+    return gbm
 
 if __name__ == "__main__":
     main()

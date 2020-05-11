@@ -1,5 +1,6 @@
 from functools import partial
 import json
+import pickle
 
 from ax import Data, Metric, Models, Objective, OptimizationConfig, Runner
 from ax.service.utils.instantiation import make_experiment
@@ -8,7 +9,7 @@ from pandas import read_csv, DataFrame
 from torch.cuda import is_available as torch_is_available
 from torch import device
 
-from fit import fit_gbm
+from .fit import score_gbm_configuration
 
 
 if torch_is_available():
@@ -65,7 +66,7 @@ def setup_ax_experiment_optimizer(data, ax_search_domain, fixed_gbm_params, cont
     )
 
     ax_trial_evaluation_func = partial(
-        fit_gbm,
+        score_gbm_configuration,
         data,
         fixed_gbm_params
     )
@@ -81,7 +82,7 @@ def setup_ax_experiment_optimizer(data, ax_search_domain, fixed_gbm_params, cont
     return ax_experiment
 
 
-def main(data, ax_search_domain, control_arm_params, fixed_gbm_params):
+def find_best_parameters(data, ax_search_domain, control_arm_params, fixed_gbm_params):
 
     ax_experiment = setup_ax_experiment_optimizer(data, ax_search_domain, control_arm_params, fixed_gbm_params)
 
@@ -89,13 +90,13 @@ def main(data, ax_search_domain, control_arm_params, fixed_gbm_params):
         search_space=ax_experiment.search_space, device=DEVICE
     )
 
-    batch_size = 5
+    batch_size = 2
     for _ in range(0, batch_size):
         generator_run = sobol.gen(1)
         ax_experiment.new_batch_trial(generator_run=generator_run)
         ax_experiment.trials[len(ax_experiment.trials)-1].run()
 
-    n_iter = 5
+    n_iter = 1
     for iter_id in range(0, n_iter):
         data = ax_experiment.fetch_data()
         botorch_model = Models.BOTORCH(
@@ -108,8 +109,16 @@ def main(data, ax_search_domain, control_arm_params, fixed_gbm_params):
         ax_experiment.new_batch_trial(generator_run=generator_run)
         ax_experiment.trials[len(ax_experiment.trials)-1].run()
 
+    ax_experiment_data = ax_experiment.fetch_data().df
+    best_score = ax_experiment_data.min()['mean']
+    best_arm_name = ax_experiment_data.loc[ax_experiment_data['mean']==best_score].arm_name.item()
+    best_arm = ax_experiment.arms_by_name[best_arm_name]
+    best_params = best_arm.parameters
 
-if __name__ == "__main__":
+    return best_params, best_score
+
+
+def main():
 
     data_ = {
         data_name: read_csv("data/" + data_name + ".csv", index_col="id")
@@ -131,4 +140,10 @@ if __name__ == "__main__":
     with open('params/fixed_gbm_params.json', 'r') as f:
         fixed_gbm_params_ = json.load(f)
 
-    main(data_, ax_search_domain_, fixed_gbm_params_, control_arm_params_)
+    best_params, best_score = find_best_parameters(data_, ax_search_domain_, fixed_gbm_params_, control_arm_params_)
+
+    return best_params, best_score
+
+
+if __name__ == "__main__":
+    main()
