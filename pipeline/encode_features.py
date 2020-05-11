@@ -15,10 +15,14 @@ def tukey_outlier_test(pd_series):
 
 
 def normalize_y():
-    y_train = read_csv("data/y_train.csv").squeeze()
+    y_train = read_csv("data/y_train.csv", index_col="id").squeeze()
     y_train_bx, _ = boxcox(y_train)
     outliers = tukey_outlier_test(y_train_bx)
     y_train_outliers_removed = y_train.drop(outliers)
     y_train_bx, bx_lambda = boxcox(y_train_outliers_removed)
     y_train_bx_whitened = (y_train_bx - y_train_bx.mean()) / y_train_bx.std()
     return y_train_bx_whitened, bx_lambda
+
+
+def fit_X_encoder():
+    X_train = read_csv()
