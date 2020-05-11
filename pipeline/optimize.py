@@ -1,6 +1,5 @@
 from functools import partial
 import json
-import pickle
 
 from ax import Data, Metric, Models, Objective, OptimizationConfig, Runner
 from ax.service.utils.instantiation import make_experiment

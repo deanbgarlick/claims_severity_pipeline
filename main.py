@@ -2,6 +2,7 @@ import pickle
 
 import pipeline
 
+
 def main():
 
     pipeline.partition_data.main()
@@ -13,7 +14,7 @@ def main():
     final_blind_score = gbm.evals_result()['validation_1']['mae'][-1]
     print("\n Final model built with blind score: " + str(final_blind_score) + "\n")
 
-    with open("gbm", "wb") as f:
+    with open("artifacts/gbm", "wb") as f:
         pickle.dump(gbm, f)
 
 
