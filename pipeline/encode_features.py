@@ -51,6 +51,7 @@ def main():
     js_encoder = fit_X_encoder()
     for partition in ["test", "holdout", "blind"]:
         transform_X(partition, js_encoder)
+    return js_encoder
 
 
 if __name__ == "__main__":

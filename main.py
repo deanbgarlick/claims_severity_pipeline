@@ -6,7 +6,7 @@ import pipeline
 def main():
 
     pipeline.partition_data.main()
-    pipeline.encode_features.main()
+    js_encoder = pipeline.encode_features.main()
     best_params, best_score = pipeline.optimize.main()
 
     print("\n Best model achieved mae of: " + str(best_score) + "in training" + "\n")
@@ -16,6 +16,10 @@ def main():
 
     with open("artifacts/gbm", "wb") as f:
         pickle.dump(gbm, f)
+    with open("artifacts/js_encoder", "wb") as f:
+        pickle.dump(js_encoder)
+
+    pipeline.save_model.main("artifacts/gbm", "artifacts/js_encoder")
 
 
 if __name__ == "__main__":
