@@ -1,6 +1,7 @@
 import category_encoders as ce
 import mlflow.pyfunc
 import xgboost as xgb
+import cloudpickle
 
 
 class XGBWrapper(mlflow.pyfunc.PythonModel):
@@ -24,6 +25,7 @@ def main(xgb_model_path, js_encoder_model_path, mlflow_pyfunc_model_path="xgb_ml
         "dependencies": [
             "xgboost={}".format(xgb.__version__),
             "category_encoders={}".format(ce.__version__),
+            'cloudpickle={}'.format(cloudpickle.__version__),
         ],
         "name": "claims_severity_model_env"
     }

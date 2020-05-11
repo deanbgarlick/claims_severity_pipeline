@@ -17,7 +17,7 @@ def main():
     with open("artifacts/gbm", "wb") as f:
         pickle.dump(gbm, f)
     with open("artifacts/js_encoder", "wb") as f:
-        pickle.dump(js_encoder)
+        pickle.dump(js_encoder, f)
 
     pipeline.save_model.main("artifacts/gbm", "artifacts/js_encoder")
 
