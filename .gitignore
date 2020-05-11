@@ -2,3 +2,4 @@
 venv/*
 project_setup.sh
 data/*
+**__pycache__**
