@@ -1,6 +1,12 @@
+# Hidden files and directories:
 .idea/*
-venv/*
-project_setup.sh
-data/*
-**__pycache__**
 .DS_Store
+
+# Artifact directories
+artifacts/*
+data/*
+venv/*
+**__pycache__**
+
+# Bash scripts
+project_setup.sh
