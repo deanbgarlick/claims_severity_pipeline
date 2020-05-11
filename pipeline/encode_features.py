@@ -27,20 +27,24 @@ def fit_transform_normalize_y(y_train):
 
 def fit_X_encoder():
     X_train = read_csv("data/X_train.csv", index_col="id")
-    X_cat_features = X_train.dtypes[X_train.dtypes == 'object'].index
+    X_cat_features = X_train.dtypes[X_train.dtypes == "object"].index
     y_train = read_csv("data/y_train.csv", index_col="id").squeeze()
     y_train_normalized, _ = fit_transform_normalize_y(y_train)
-    js_encoder = JamesSteinEncoder(cols=list(X_cat_features), randomized=True, sigma=0.0001)
+    js_encoder = JamesSteinEncoder(
+        cols=list(X_cat_features), randomized=True, sigma=0.0001
+    )
     X_train_outliers_removed = X_train.loc[y_train_normalized.index]
-    X_train_encoded = js_encoder.fit_transform(X_train_outliers_removed, y_train_normalized)
+    X_train_encoded = js_encoder.fit_transform(
+        X_train_outliers_removed, y_train_normalized
+    )
     X_train_encoded.to_csv("data/X_train_encoded.csv")
     return js_encoder
 
 
 def transform_X(partition_name, js_encoder):
-    X = read_csv("data/X_"+partition_name+".csv", index_col="id")
+    X = read_csv("data/X_" + partition_name + ".csv", index_col="id")
     X_encoded = js_encoder.transform(X)
-    X_encoded.to_csv("data/X_"+partition_name+"_encoded.csv")
+    X_encoded.to_csv("data/X_" + partition_name + "_encoded.csv")
 
 
 def main():
