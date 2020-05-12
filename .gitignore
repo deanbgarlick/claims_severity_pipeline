@@ -5,8 +5,11 @@
 # Artifact directories
 artifacts/*
 data/*
+envs/*
 venv/*
 **__pycache__**
+xgb_mlflow_pyfunc/*
+
 
 # Bash scripts
 # project_setup.sh
