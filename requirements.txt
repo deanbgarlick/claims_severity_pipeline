@@ -1,6 +1,6 @@
 appdirs==1.4.4
 attrs==19.3.0
-ax-platform==0.1.11
+ax-platform==0.1.9
 black==19.10b0
 botorch==0.2.3
 category-encoders==2.2.2
