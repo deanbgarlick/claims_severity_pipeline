@@ -1,8 +1,10 @@
 kaggle competitions download -c allstate-claims-severity
+mkdir artifacts
 mkdir data
 unzip allstate-claims-severity.zip -d data
-conda create --prefix ./envs
+rm allstate-claims-severity.zip
+conda create --prefix ./envs python=3.6 -y
 conda activate ./envs
-pip install -r requirements.txt
+pip install -r requirements.txt -y
 conda env export > environment.yaml
 python main.py
