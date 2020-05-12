@@ -6,6 +6,7 @@
 artifacts/*
 data/*
 envs/*
+mlruns/*
 venv/*
 **__pycache__**
 xgb_mlflow_pyfunc/*
