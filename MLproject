@@ -6,5 +6,6 @@ entry_points:
   main:
     parameters:
       data_file: path
-      regularization: {type: float, default: 0.1}
-    command: "python main.py -r {regularization} {data_file}"
+      n_sobol: {type: int, default: 5}
+      n_ei: {type: int, default: 5}
+    command: "python main.py  --data_path={data_file} --n_sobol={n_sobol} --n_ei={n_ei}"

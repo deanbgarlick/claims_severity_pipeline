@@ -1,13 +1,22 @@
 import pickle
 
+import click
+
 import pipeline
 
 
-def main():
+@click.command(help="Perform hyperparameter search with Ax library.")
+@click.option("--data_path", type=click.STRING, default="data/train.csv",
+              help="Maximum number of runs to evaluate.")
+@click.option("--n_sobol", type=click.INT, default=10,
+              help="Maximum number of runs to evaluate.")
+@click.option("--n_ei", type=click.INT, default=500,
+              help="Number of epochs")
+def main(data_path, n_sobol, n_ei):
 
-    pipeline.partition_data.main()
+    pipeline.partition_data.main(data_path)
     js_encoder = pipeline.encode_features.main()
-    best_params, best_score = pipeline.optimize.main()
+    best_params, best_score = pipeline.optimize.main(n_sobol, n_ei)
 
     print("\n Best model achieved mae of: " + str(best_score) + "in training" + "\n")
     gbm = pipeline.fit.main(best_params)

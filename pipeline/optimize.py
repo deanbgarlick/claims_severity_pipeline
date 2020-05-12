@@ -81,7 +81,7 @@ def setup_ax_experiment_optimizer(data, ax_search_domain, fixed_gbm_params, cont
     return ax_experiment
 
 
-def find_best_parameters(data, ax_search_domain, control_arm_params, fixed_gbm_params):
+def find_best_parameters(data, ax_search_domain, control_arm_params, fixed_gbm_params, n_sobol=5, n_ei=5):
 
     ax_experiment = setup_ax_experiment_optimizer(data, ax_search_domain, control_arm_params, fixed_gbm_params)
 
@@ -89,14 +89,12 @@ def find_best_parameters(data, ax_search_domain, control_arm_params, fixed_gbm_p
         search_space=ax_experiment.search_space, device=DEVICE
     )
 
-    batch_size = 2
-    for _ in range(0, batch_size):
+    for _ in range(0, n_sobol):
         generator_run = sobol.gen(1)
         ax_experiment.new_batch_trial(generator_run=generator_run)
         ax_experiment.trials[len(ax_experiment.trials)-1].run()
 
-    n_iter = 1
-    for iter_id in range(0, n_iter):
+    for iter_id in range(0, n_ei):
         data = ax_experiment.fetch_data()
         botorch_model = Models.BOTORCH(
             experiment=ax_experiment,
@@ -117,7 +115,7 @@ def find_best_parameters(data, ax_search_domain, control_arm_params, fixed_gbm_p
     return best_params, best_score
 
 
-def main():
+def main(n_sobol=5, n_ei=5):
 
     data_ = {
         data_name: read_csv("data/" + data_name + ".csv", index_col="id")
@@ -139,7 +137,7 @@ def main():
     with open('params/fixed_gbm_params.json', 'r') as f:
         fixed_gbm_params_ = json.load(f)
 
-    best_params, best_score = find_best_parameters(data_, ax_search_domain_, fixed_gbm_params_, control_arm_params_)
+    best_params, best_score = find_best_parameters(data_, ax_search_domain_, fixed_gbm_params_, control_arm_params_, n_sobol=n_sobol, n_ei=n_ei)
 
     return best_params, best_score
 

@@ -18,11 +18,11 @@ def partition_data_and_save_to_disk(
     return X_remaining, y_remaining
 
 
-def main():
+def main(data_path="data/train.csv"):
     """Load training data from data directory. Separate features from response.
     Partition the data along its rows and the partitions to disk."""
 
-    data = read_csv("data/train.csv", index_col="id")
+    data = read_csv(data_path, index_col="id")
     X = data[data.columns.drop("loss")]
     y = data["loss"]
 

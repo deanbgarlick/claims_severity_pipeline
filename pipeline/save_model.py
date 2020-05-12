@@ -1,3 +1,6 @@
+import os
+import shutil
+
 import category_encoders as ce
 import mlflow.pyfunc
 import xgboost as xgb
@@ -34,6 +37,9 @@ def main(xgb_model_path, js_encoder_model_path, mlflow_pyfunc_model_path="xgb_ml
         "xgb_model": xgb_model_path,
         "js_encoder": js_encoder_model_path
     }
+
+    if os.path.exists(mlflow_pyfunc_model_path):
+        shutil.rmtree(mlflow_pyfunc_model_path)
 
     # Save the MLflow Model
     mlflow.pyfunc.save_model(
