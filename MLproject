@@ -5,7 +5,7 @@ conda_env: environment.yml
 entry_points:
   main:
     parameters:
-      data_file: path
+      data_file: {type: string, default: "./data/train.csv"}
       n_sobol: {type: int, default: 5}
       n_ei: {type: int, default: 5}
     command: "python main.py  --data_path={data_file} --n_sobol={n_sobol} --n_ei={n_ei}"
