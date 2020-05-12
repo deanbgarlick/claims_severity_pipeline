@@ -1,4 +1,4 @@
-name: /Users/deangarlick/projects/tmp/claims_severity_pipeline/envs
+name: claims_severity_pipeline_env
 channels:
   - defaults
 dependencies:
@@ -81,5 +81,4 @@ dependencies:
     - websocket-client==0.57.0
     - werkzeug==1.0.1
     - xgboost==1.0.2
-prefix: /Users/deangarlick/projects/tmp/claims_severity_pipeline/envs
 
