@@ -1,5 +1,9 @@
-from functools import partial
 import json
+
+from  datetime import datetime
+from functools import partial
+
+import mlflow
 
 from ax import Data, Metric, Models, Objective, OptimizationConfig, Runner
 from ax.service.utils.instantiation import make_experiment
@@ -22,6 +26,16 @@ class SimpleRunner(Runner):
 
     def run(self, trial):
         return {"name": str(trial.index)}
+
+
+def log_parameters(ax_experiment):
+    arm_name = ax_experiment.fetch_data().df.iloc[-1, :]['arm_name']
+    arm = ax_experiment.arms_by_name[arm_name]
+    mlflow.log_params(arm.parameters)
+
+
+def log_metric(ax_experiment):
+    mlflow.log_metric('test_set_mae', ax_experiment.fetch_data().df.iloc[-1, :]['mean'])
 
 
 def construct_ax_metric(evaluation_func, name):
@@ -89,22 +103,38 @@ def find_best_parameters(data, ax_search_domain, control_arm_params, fixed_gbm_p
         search_space=ax_experiment.search_space, device=DEVICE
     )
 
-    for _ in range(0, n_sobol):
-        generator_run = sobol.gen(1)
-        ax_experiment.new_batch_trial(generator_run=generator_run)
-        ax_experiment.trials[len(ax_experiment.trials)-1].run()
+    dateTimeObj = datetime.now()
+    timestampStr = dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S.%f)")
 
-    for iter_id in range(0, n_ei):
-        data = ax_experiment.fetch_data()
-        botorch_model = Models.BOTORCH(
-            experiment=ax_experiment,
-            data=data,
-            acqf_constructor=get_NEI,
-            device=DEVICE,
-        )
-        generator_run = botorch_model.gen(1)
-        ax_experiment.new_batch_trial(generator_run=generator_run)
-        ax_experiment.trials[len(ax_experiment.trials)-1].run()
+    mlflow_experiment_id = mlflow.create_experiment(name=timestampStr)
+    mlflow.set_experiment(timestampStr)
+
+    for run_id in range(0, n_sobol):
+        with mlflow.start_run(
+            run_name="sobol_" + str(run_id), experiment_id=mlflow_experiment_id
+        ) as parent_run:
+            generator_run = sobol.gen(1)
+            ax_experiment.new_batch_trial(generator_run=generator_run)
+            ax_experiment.trials[len(ax_experiment.trials)-1].run()
+            log_parameters(ax_experiment)
+            log_metric(ax_experiment)
+
+    for run_id in range(0, n_ei):
+        with mlflow.start_run(
+            run_name="gp_nei_" + str(run_id), experiment_id=mlflow_experiment_id
+        ) as parent_run:
+            data = ax_experiment.fetch_data()
+            botorch_model = Models.BOTORCH(
+                experiment=ax_experiment,
+                data=data,
+                acqf_constructor=get_NEI,
+                device=DEVICE,
+            )
+            generator_run = botorch_model.gen(1)
+            ax_experiment.new_batch_trial(generator_run=generator_run)
+            ax_experiment.trials[len(ax_experiment.trials)-1].run()
+            log_parameters(ax_experiment)
+            log_metric(ax_experiment)
 
     ax_experiment_data = ax_experiment.fetch_data().df
     best_score = ax_experiment_data.min()['mean']

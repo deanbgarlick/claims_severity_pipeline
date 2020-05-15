@@ -1,6 +1,8 @@
 from copy import deepcopy
 import json
 
+import mlflow
+
 from pandas import read_csv
 from xgboost import XGBRegressor
 
@@ -12,6 +14,7 @@ def score_gbm_configuration(data, fixed_gbm_params, variable_gbm_params):
 
 
 def fit_gbm(data, fixed_gbm_params, variable_gbm_params):
+
     gbm_parameters = deepcopy(variable_gbm_params)
     gbm_parameters.update(fixed_gbm_params)
     gbm = XGBRegressor(objective="reg:gamma")

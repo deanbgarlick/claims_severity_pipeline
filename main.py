@@ -10,7 +10,7 @@ import pipeline
               help="Maximum number of runs to evaluate.")
 @click.option("--n_sobol", type=click.INT, default=10,
               help="Maximum number of runs to evaluate.")
-@click.option("--n_ei", type=click.INT, default=500,
+@click.option("--n_ei", type=click.INT, default=10,
               help="Number of epochs")
 def main(data_path, n_sobol, n_ei):
 
