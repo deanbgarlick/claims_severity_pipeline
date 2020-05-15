@@ -1,8 +1,6 @@
 from copy import deepcopy
 import json
 
-import mlflow
-
 from pandas import read_csv
 from xgboost import XGBRegressor
 
