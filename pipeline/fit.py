@@ -12,7 +12,6 @@ def score_gbm_configuration(data, fixed_gbm_params, variable_gbm_params):
 
 
 def fit_gbm(data, fixed_gbm_params, variable_gbm_params):
-
     gbm_parameters = deepcopy(variable_gbm_params)
     gbm_parameters.update(fixed_gbm_params)
     gbm = XGBRegressor(objective="reg:gamma")
@@ -31,7 +30,6 @@ def fit_gbm(data, fixed_gbm_params, variable_gbm_params):
 
 
 def main(variable_gbm_params=None):
-
     data = {
         data_name: read_csv("data/" + data_name + ".csv", index_col="id")
         for data_name in [
